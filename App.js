@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
 import axios from 'axios';
+import CurrentWeather from './components/CurrentWeather';
+import Forecast from './components/Forecast';
 
-const API_KEY = '7e8e2e58051fba9a97cdd779cb4910c6';
+const API_KEY = 'YOUR_API_KEY_HERE';
 
 export default function App() {
   const [location, setLocation] = useState(null);
+  const [weather, setWeather] = useState(null);
   const [forecast, setForecast] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -23,8 +26,11 @@ export default function App() {
       setLocation(location);
 
       const { latitude, longitude } = location.coords;
-      const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`);
-      setForecast(response.data);
+      const weatherResponse = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`);
+      setWeather(weatherResponse.data);
+
+      const forecastResponse = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`);
+      setForecast(forecastResponse.data);
     })();
   }, []);
 
@@ -37,10 +43,10 @@ export default function App() {
     );
   }
 
-  if (!forecast) {
+  if (!weather || !forecast) {
     return (
       <View style={styles.container}>
-        <Text>Loading...</Text>
+        <ActivityIndicator size="large" color="#0000ff" />
         <StatusBar style="auto" />
       </View>
     );
@@ -48,19 +54,8 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
-        {forecast.list.map((item, index) => (
-          <View key={index} style={styles.forecastItem}>
-            <Text>{new Date(item.dt * 1000).toLocaleString()}</Text>
-            <Text>Température: {item.main.temp}°C</Text>
-            <Text>Description: {item.weather[0].description}</Text>
-            <Image
-              style={{ width: 50, height: 50 }}
-              source={{ uri: `http://openweathermap.org/img/wn/${item.weather[0].icon}.png` }}
-            />
-          </View>
-        ))}
-      </ScrollView>
+      <CurrentWeather weather={weather} />
+      <Forecast forecast={forecast} />
       <StatusBar style="auto" />
     </View>
   );
@@ -72,9 +67,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  forecastItem: {
-    marginVertical: 10,
-    alignItems: 'center',
   },
 });
