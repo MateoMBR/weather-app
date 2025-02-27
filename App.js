@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import CurrentWeather from './components/CurrentWeather';
 import Forecast from './components/Forecast';
 
-const API_KEY = 'YOUR_API_KEY_HERE';
+const API_KEY = '7e8e2e58051fba9a97cdd779cb4910c6';
 
 export default function App() {
   const [location, setLocation] = useState(null);
@@ -63,6 +63,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 50,
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',

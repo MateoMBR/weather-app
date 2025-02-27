@@ -3,16 +3,17 @@ import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 
 const Forecast = ({ forecast }) => {
   return (
-    <ScrollView>
+    <ScrollView horizontal style={styles.scrollContainer}>
       {forecast.list.map((item, index) => (
         <View key={index} style={styles.forecastItem}>
-          <Text>{new Date(item.dt * 1000).toLocaleString()}</Text>
-          <Text>Température: {item.main.temp}°C</Text>
-          <Text>Description: {item.weather[0].description}</Text>
+          <Text>{new Date(item.dt * 1000).toLocaleDateString()}</Text>
+          <Text>{new Date(item.dt * 1000).toLocaleTimeString()}</Text>
+          <Text>{item.main.temp}°C</Text>
           <Image
-            style={{ width: 50, height: 50 }}
+            style={styles.icon}
             source={{ uri: `http://openweathermap.org/img/wn/${item.weather[0].icon}.png` }}
           />
+          <Text>{item.weather[0].description}</Text>
         </View>
       ))}
     </ScrollView>
@@ -20,9 +21,16 @@ const Forecast = ({ forecast }) => {
 };
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    marginVertical: 20,
+  },
   forecastItem: {
-    marginVertical: 10,
     alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  icon: {
+    width: 50,
+    height: 50,
   },
 });
 
